@@ -9,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 
+import { ApiTags } from '@nestjs/swagger';
 import { Comment as CommentModelPrisma } from '@prisma/client';
 
+@ApiTags('Comments')
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
