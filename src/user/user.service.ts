@@ -6,15 +6,13 @@ import { PrismaService } from 'src/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+  async create(data: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({
+      data,
     });
   }
 
-  async users(params: {
+  async findAll(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
@@ -31,26 +29,32 @@ export class UserService {
     });
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
-      data,
+  async findOne(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: userWhereUniqueInput,
     });
   }
 
-  async updateUser(params: {
-    where: Prisma.UserWhereUniqueInput;
+  async update(params: {
+    id: number;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    const { where, data } = params;
+    const { id, data } = params;
     return this.prisma.user.update({
       data,
-      where,
+      where: {
+        id,
+      },
     });
   }
 
-  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  async remove(id: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.prisma.user.delete({
-      where,
+      where: {
+        id: Number(id),
+      },
     });
   }
 }

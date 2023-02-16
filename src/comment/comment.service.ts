@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Comment, Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class CommentService {
   constructor(private prisma: PrismaService) {}
 
-  async comment(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<Comment | null> {
-    return this.prisma.comment.findUnique({
-      where: userWhereUniqueInput,
+  async create(data: Prisma.CommentCreateInput): Promise<Comment> {
+    return this.prisma.comment.create({
+      data,
     });
   }
 
-  async comments(params: {
+  async findAll(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.CommentWhereUniqueInput;
@@ -33,24 +31,26 @@ export class CommentService {
     });
   }
 
-  async createComment(data: Prisma.CommentCreateInput): Promise<Comment> {
-    return this.prisma.comment.create({
-      data,
+  async findOne(id: Prisma.UserWhereUniqueInput): Promise<Comment | null> {
+    return this.prisma.comment.findUnique({
+      where: id,
     });
   }
 
-  async updateComment(params: {
-    where: Prisma.CommentWhereUniqueInput;
+  async update(params: {
+    id: number;
     data: Prisma.CommentUpdateInput;
   }): Promise<Comment> {
-    const { where, data } = params;
+    const { id, data } = params;
     return this.prisma.comment.update({
       data,
-      where,
+      where: {
+        id,
+      },
     });
   }
 
-  async deleteComment(where: Prisma.CommentWhereUniqueInput): Promise<Comment> {
+  async remove(where: Prisma.CommentWhereUniqueInput): Promise<Comment> {
     return this.prisma.comment.delete({
       where,
     });

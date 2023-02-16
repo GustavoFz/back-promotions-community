@@ -1,0 +1,44 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { User as UserModelPrisma } from '@prisma/client';
+import { UserService } from './user.service';
+
+@Controller('user')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  async create(@Body() data: UserModelPrisma): Promise<UserModelPrisma> {
+    return this.userService.create(data);
+  }
+
+  @Get()
+  async findAll(): Promise<UserModelPrisma[]> {
+    return this.userService.findAll({});
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<UserModelPrisma> {
+    return this.userService.findOne({ id: Number(id) });
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() data: UserModelPrisma,
+  ): Promise<UserModelPrisma> {
+    return this.userService.update({ id: Number(id), data });
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<UserModelPrisma> {
+    return this.userService.remove({ id: Number(id) });
+  }
+}
