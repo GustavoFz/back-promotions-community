@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './filter/http-exception.filter';
 import { PrismaService } from './prisma.service';
 
 async function bootstrap() {
@@ -17,6 +18,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.enableCors();
   await app.listen(4000);
