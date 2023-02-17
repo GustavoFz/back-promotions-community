@@ -16,6 +16,7 @@ model User {
   picture  String?
   email    String    @unique
   posts    Post[]
+  password String
   comments Comment[]
 
   createdAt DateTime @default(now())

@@ -1,17 +1,26 @@
 import { Prisma } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class CreateUserDto implements Prisma.UserCreateInput {
   @IsNotEmpty({ message: 'Name is required.' })
   @IsString()
   nickname: string;
 
+  @IsOptional()
   @IsUrl()
   picture?: string;
 
   @IsNotEmpty({ message: 'Email is required.' })
   @IsEmail()
   email: string;
+
+  password: string;
 
   posts?: Prisma.PostCreateNestedManyWithoutUserInput;
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput;
