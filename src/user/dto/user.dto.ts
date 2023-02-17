@@ -1,6 +1,7 @@
+import Prisma from '@prisma/client';
 import { IsDate, IsEmail, IsInt, IsString, IsUrl } from 'class-validator';
 
-export class UserDto {
+export class UserDto implements Prisma.User {
   @IsInt()
   id: number;
 
@@ -8,7 +9,7 @@ export class UserDto {
   nickname: string;
 
   @IsUrl()
-  picture?: string;
+  picture: string;
 
   @IsEmail()
   email: string;

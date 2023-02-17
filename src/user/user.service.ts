@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 
 @Injectable()
@@ -49,10 +50,7 @@ export class UserService {
     });
   }
 
-  async update(params: {
-    id: number;
-    data: Prisma.UserUpdateInput;
-  }): Promise<UserDto> {
+  async update(params: { id: number; data: UpdateUserDto }): Promise<UserDto> {
     const { id, data } = params;
     return this.prisma.user.update({
       data,
