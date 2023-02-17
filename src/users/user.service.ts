@@ -3,13 +3,13 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateUserDto): Promise<UserDto> {
+  async create(data: CreateUserDto): Promise<User> {
     const userExists = await this.findOne({ email: data.email });
     if (userExists?.email == data.email) {
       throw new HttpException('user already exists', 202);
@@ -26,7 +26,7 @@ export class UserService {
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<UserDto[] | null> {
+  }): Promise<User[] | null> {
     const { skip, take, cursor, where, orderBy } = params;
     const users = await this.prisma.user.findMany({
       skip,
@@ -44,13 +44,13 @@ export class UserService {
 
   async findOne(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<UserDto | null> {
+  ): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: userWhereUniqueInput,
     });
   }
 
-  async update(params: { id: number; data: UpdateUserDto }): Promise<UserDto> {
+  async update(params: { id: number; data: UpdateUserDto }): Promise<User> {
     const { id, data } = params;
     return this.prisma.user.update({
       data,
@@ -60,7 +60,7 @@ export class UserService {
     });
   }
 
-  async remove(id: Prisma.UserWhereUniqueInput): Promise<UserDto> {
+  async remove(id: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.prisma.user.delete({
       where: {
         id: Number(id),
