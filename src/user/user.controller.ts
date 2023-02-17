@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User as UserModelPrisma } from '@prisma/client';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')
@@ -17,17 +19,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async create(@Body() data: UserModelPrisma): Promise<UserModelPrisma> {
+  async create(@Body() data: CreateUserDto): Promise<UserDto> {
     return this.userService.create(data);
   }
 
   @Get()
-  async findAll(): Promise<UserModelPrisma[]> {
+  async findAll(): Promise<UserDto[]> {
     return this.userService.findAll({});
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserModelPrisma> {
+  async findOne(@Param('id') id: string): Promise<UserDto> {
     return this.userService.findOne({ id: Number(id) });
   }
 
@@ -35,12 +37,12 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() data: UserModelPrisma,
-  ): Promise<UserModelPrisma> {
+  ): Promise<UserDto> {
     return this.userService.update({ id: Number(id), data });
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<UserModelPrisma> {
+  async remove(@Param('id') id: string): Promise<UserDto> {
     return this.userService.remove({ id: Number(id) });
   }
 }

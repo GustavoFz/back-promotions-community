@@ -12,9 +12,9 @@ datasource db {
 
 model User {
   id       Int       @id @default(autoincrement())
-  nickname String    @unique
+  nickname String
   picture  String?
-  email    String
+  email    String    @unique
   posts    Post[]
   comments Comment[]
 
