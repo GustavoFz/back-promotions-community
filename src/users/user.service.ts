@@ -1,5 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,15 +11,22 @@ import { User } from './entities/user.entity';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateUserDto): Promise<User> {
-    const userExists = await this.findOne({ email: data.email });
-    if (userExists?.email == data.email) {
+  async create(CreateUserDto: CreateUserDto): Promise<User> {
+    const userExists = await this.findOne({ email: CreateUserDto.email });
+    if (userExists?.email == CreateUserDto.email) {
       throw new HttpException('user already exists', 202);
     }
 
-    return await this.prisma.user.create({
+    const data = {
+      ...CreateUserDto,
+      password: await bcrypt.hash(CreateUserDto.password, 10),
+    };
+
+    const createUser = await this.prisma.user.create({
       data,
     });
+
+    return { ...createUser, password: undefined };
   }
 
   async findAll(params: {
@@ -42,11 +51,14 @@ export class UserService {
     return users;
   }
 
-  async findOne(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+  async findOne(id: Prisma.UserWhereUniqueInput): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
+      where: id,
+    });
+  }
+  async findByEmail(email: Prisma.UserWhereUniqueInput): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: email,
     });
   }
 

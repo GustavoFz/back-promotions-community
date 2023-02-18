@@ -1,7 +1,7 @@
-import Prisma from '@prisma/client';
 import { IsDate, IsEmail, IsInt, IsString, IsUrl } from 'class-validator';
+import { User } from '../entities/user.entity';
 
-export class UserWithoutPasswordDto implements Partial<Prisma.User> {
+export class userLoginDto extends User {
   @IsInt()
   id: number;
 
@@ -9,7 +9,7 @@ export class UserWithoutPasswordDto implements Partial<Prisma.User> {
   nickname: string;
 
   @IsUrl()
-  picture?: string;
+  picture: string;
 
   @IsEmail()
   email: string;

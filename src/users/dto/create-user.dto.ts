@@ -1,13 +1,15 @@
-import { Prisma } from '@prisma/client';
 import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUrl,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
+import { User } from '../entities/user.entity';
 
-export class CreateUserDto implements Prisma.UserCreateInput {
+export class CreateUserDto extends User {
   @IsNotEmpty({ message: 'Name is required.' })
   @IsString()
   nickname: string;
@@ -20,9 +22,11 @@ export class CreateUserDto implements Prisma.UserCreateInput {
   @IsEmail()
   email: string;
 
+  @IsString()
+  @MinLength(4)
+  @MaxLength(20)
+  //@Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+  //  message: 'password too weak',
+  //})
   password: string;
-
-  posts?: Prisma.PostCreateNestedManyWithoutUserInput;
-  comments?: Prisma.CommentCreateNestedManyWithoutUserInput;
-  createdAt?: string | Date;
 }
