@@ -1,7 +1,6 @@
 import { IsEmail, IsString } from 'class-validator';
-import { User } from 'src/users/entities/user.entity';
 
-export class AuthValidate implements Partial<User> {
+export class AuthValidate {
   @IsEmail()
   email: string;
 
