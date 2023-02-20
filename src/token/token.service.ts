@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma.service';
 import { User } from 'src/users/entities/user.entity';
@@ -18,20 +19,28 @@ export class TokenService {
     private authService: AuthService,
   ) {}
 
-  async create(CreateToken: CreateTokenDto) {
+  async create(data: CreateTokenDto) {
     const objToken = await this.prisma.token.findUnique({
-      where: { email: CreateToken.email },
+      where: { email: data.email },
     });
     if (objToken) {
       await this.prisma.token.update({
-        where: { email: CreateToken.email },
-        data: { hash: CreateToken.hash },
+        where: { email: data.email },
+        data: { hash: data.hash },
       });
     } else {
       await this.prisma.token.create({
-        data: { email: CreateToken.email, hash: CreateToken.hash },
+        data,
       });
     }
+  }
+
+  async delete(token: string) {
+    await this.prisma.token.deleteMany({
+      where: {
+        hash: token,
+      },
+    });
   }
 
   async refreshToken(oldToken: string) {

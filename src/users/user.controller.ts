@@ -6,16 +6,14 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User as UserModelPrisma } from '@prisma/client';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { AccessToken } from 'src/token/dto/access-token.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
-@UseGuards(JwtAuthGuard)
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -23,7 +21,7 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: 'Create user' })
-  async create(@Body() data: CreateUserDto): Promise<User> {
+  async create(@Body() data: CreateUserDto): Promise<AccessToken> {
     return this.userService.create(data);
   }
 
@@ -43,7 +41,7 @@ export class UserController {
   @ApiOperation({ summary: 'Update user' })
   async update(
     @Param('id') id: string,
-    @Body() data: UserModelPrisma,
+    @Body() data: UpdateUserDto,
   ): Promise<User> {
     return this.userService.update({ id: Number(id), data });
   }

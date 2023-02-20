@@ -1,17 +1,23 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
+import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma.service';
+import { AccessToken } from 'src/token/dto/access-token.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
+  ) {}
 
-  async create(CreateUserDto: CreateUserDto): Promise<User> {
+  async create(CreateUserDto: CreateUserDto): Promise<AccessToken> {
     const userExists = await this.findOne({ email: CreateUserDto.email });
     if (userExists?.email == CreateUserDto.email) {
       throw new HttpException('user already exists', 202);
@@ -22,11 +28,13 @@ export class UserService {
       password: await bcrypt.hash(CreateUserDto.password, 10),
     };
 
-    const createUser = await this.prisma.user.create({
+    await this.prisma.user.create({
       data,
     });
 
-    return { ...createUser, password: undefined };
+    const token = await this.authService.login(CreateUserDto);
+
+    return token;
   }
 
   async findAll(params: {
