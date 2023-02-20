@@ -54,3 +54,9 @@ model Comment {
 
   createdAt DateTime @default(now())
 }
+
+model Token {
+  id    Int    @id @default(autoincrement())
+  hash  String
+  email String @unique
+}

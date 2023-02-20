@@ -6,9 +6,10 @@ import { CommentModule } from './comments/comment.module';
 import { PostModule } from './posts/post.module';
 import { PrismaService } from './prisma.service';
 import { UserModule } from './users/user.module';
+import { TokenModule } from './token/token.module';
 
 @Module({
-  imports: [CommentModule, PostModule, UserModule, AuthModule],
+  imports: [CommentModule, PostModule, UserModule, AuthModule, TokenModule],
   controllers: [AppController],
   providers: [PrismaService],
 })
