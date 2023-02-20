@@ -6,12 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 
 import { ApiTags } from '@nestjs/swagger';
 import { Comment as CommentModelPrisma } from '@prisma/client';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Comments')
 @Controller('comment')
 export class CommentController {

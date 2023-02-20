@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { User } from '../entities/user.entity';
 
-export class CreateUserDto extends User {
+export class CreateUserDto implements Partial<User> {
   @IsNotEmpty({ message: 'Name is required.' })
   @IsString()
   nickname: string;
