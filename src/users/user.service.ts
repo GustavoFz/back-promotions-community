@@ -18,7 +18,7 @@ export class UserService {
   ) {}
 
   async create(CreateUserDto: CreateUserDto): Promise<AccessToken> {
-    const userExists = await this.findOne({ email: CreateUserDto.email });
+    const userExists = await this.findByEmail(CreateUserDto.email);
     if (userExists?.email == CreateUserDto.email) {
       throw new HttpException('user already exists', 202);
     }
@@ -37,7 +37,16 @@ export class UserService {
     return token;
   }
 
-  async findAll(params: {
+  async findAll(): Promise<User[] | null> {
+    const users = await this.prisma.user.findMany();
+
+    if (users.length == 0) {
+      throw new HttpException('users not found', 404);
+    }
+    return users;
+  }
+
+  async findByFilter(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
@@ -59,19 +68,27 @@ export class UserService {
     return users;
   }
 
-  async findOne(id: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async findById(id: number): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: id,
-    });
-  }
-  async findByEmail(email: Prisma.UserWhereUniqueInput): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: email,
+      where: {
+        id,
+      },
     });
   }
 
-  async update(params: { id: number; data: UpdateUserDto }): Promise<User> {
-    const { id, data } = params;
+  async findUserWithoutPasswordByEmail(email: string): Promise<User | null> {
+    return;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
+
+  async update(id: number, data: UpdateUserDto): Promise<User> {
     return this.prisma.user.update({
       data,
       where: {
@@ -80,10 +97,10 @@ export class UserService {
     });
   }
 
-  async remove(id: Prisma.UserWhereUniqueInput): Promise<User> {
+  async remove(id: number): Promise<User> {
     return this.prisma.user.delete({
       where: {
-        id: Number(id),
+        id,
       },
     });
   }

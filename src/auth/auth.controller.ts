@@ -11,7 +11,7 @@ import { TokenService } from 'src/token/token.service';
 import { User } from 'src/users/entities/user.entity';
 
 import { AuthService } from './auth.service';
-import { AuthValidate } from './dto/validate-auth.dto';
+import { AuthLogin } from './dto/login-auth.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @ApiTags('Auth')
@@ -23,7 +23,7 @@ export class AuthController {
   ) {}
 
   @UseGuards(LocalAuthGuard)
-  @ApiBody({ type: AuthValidate })
+  @ApiBody({ type: AuthLogin })
   @HttpCode(200)
   @Post('login')
   async login(@Body() user: User) {

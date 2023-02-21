@@ -28,27 +28,27 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Find all users' })
   async findAll(): Promise<User[]> {
-    return this.userService.findAll({});
+    return this.userService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Find user' })
-  async findOne(@Param('id') id: string): Promise<User> {
-    return this.userService.findOne({ id: Number(id) });
+  async findOne(@Param('id') id: number): Promise<User> {
+    return this.userService.findById(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update user' })
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() data: UpdateUserDto,
   ): Promise<User> {
-    return this.userService.update({ id: Number(id), data });
+    return this.userService.update(id, data);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user' })
-  async remove(@Param('id') id: string): Promise<User> {
-    return this.userService.remove({ id: Number(id) });
+  async remove(@Param('id') id: number): Promise<User> {
+    return this.userService.remove(id);
   }
 }

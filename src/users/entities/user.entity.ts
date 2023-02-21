@@ -1,28 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import Prisma from '@prisma/client';
 
-export class User implements Partial<Prisma.User> {
+export class User {
   id: number;
 
-  @ApiProperty({
-    example: 'Gustavo Franco',
-  })
+  @ApiProperty({ example: 'Gustavo Franco' })
   nickname: string;
 
-  @ApiProperty({
-    example: 'www.mypicture.com/picture3',
-    required: false,
-  })
+  @ApiProperty({ example: 'www.mypicture.com/picture3', required: false })
   picture?: string;
 
-  @ApiProperty({
-    example: 'gustavofranco@solidtech.com',
-  })
+  @ApiProperty({ example: 'gustavofranco@solidktech.com' })
   email: string;
 
-  @ApiProperty({
-    example: 'YOUR PASSWORD HERE',
-  })
+  @ApiProperty({ example: 'YOUR PASSWORD HERE' })
   password: string;
 
   createdAt: Date;

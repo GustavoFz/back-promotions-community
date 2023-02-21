@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
+import { UserWithoutPasswordDto } from 'src/auth/dto/withoutPassword-user.dto';
+import { AccessToken } from 'src/token/dto/access-token.dto';
 import { TokenService } from 'src/token/token.service';
-import { UserWithoutPasswordDto } from 'src/users/dto/withoutPassword-user.dto';
 import { UserService } from 'src/users/user.service';
-import { AuthValidate } from './dto/validate-auth.dto';
+import { AuthLogin } from './dto/login-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,18 +16,18 @@ export class AuthService {
     private tokenService: TokenService,
   ) {}
 
-  async login(data: AuthValidate) {
+  async login(data: AuthLogin): Promise<AccessToken> {
     const user = await this.validateUser(data.email, data.password);
-
+    const { id, email, nickname, picture } = user;
     const payload = {
-      id: user.id,
-      email: user.email,
-      nickname: user.nickname,
-      picture: user.picture,
+      id,
+      email,
+      nickname,
+      picture,
     };
 
     const token = await this.jwtService.sign(payload);
-    await this.tokenService.create({ hash: token, email: user.email });
+    await this.tokenService.create(token, email);
     return {
       access_token: token,
     };
@@ -36,7 +37,7 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<UserWithoutPasswordDto> {
-    const user = await this.userService.findByEmail({ email });
+    const user = await this.userService.findByEmail(email);
 
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -46,7 +47,6 @@ export class AuthService {
         return result;
       }
     }
-
     return null;
   }
 }

@@ -7,9 +7,7 @@ import {
 
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma.service';
-import { User } from 'src/users/entities/user.entity';
-import { CreateTokenDto } from './dto/create-token.dto';
-import { TokenDto } from './entities/token.entity';
+import { AccessToken } from './dto/access-token.dto';
 
 @Injectable()
 export class TokenService {
@@ -19,20 +17,17 @@ export class TokenService {
     private authService: AuthService,
   ) {}
 
-  async create(data: CreateTokenDto) {
-    const objToken = await this.prisma.token.findUnique({
-      where: { email: data.email },
-    });
+  async create(hash: string, email: string) {
+    const objToken = await this.prisma.token.findUnique({ where: { email } });
+
     if (objToken) {
-      await this.prisma.token.update({
-        where: { email: data.email },
-        data: { hash: data.hash },
-      });
-    } else {
-      await this.prisma.token.create({
-        data,
+      return await this.prisma.token.update({
+        where: { email },
+        data: { hash },
       });
     }
+
+    return await this.prisma.token.create({ data: { email, hash } });
   }
 
   async delete(token: string) {
@@ -43,7 +38,7 @@ export class TokenService {
     });
   }
 
-  async refreshToken(oldToken: string) {
+  async refreshToken(oldToken: string): Promise<AccessToken> {
     const objToken = await this.prisma.token.findFirst({
       where: { hash: oldToken },
     });
@@ -57,17 +52,17 @@ export class TokenService {
     throw new UnauthorizedException('Invalid Token');
   }
 
-  async getUserByToken(token: string): Promise<User> {
-    token = token.replace('Bearer ', '').trim();
-    const objToken: TokenDto = await this.prisma.token.findFirst({
-      where: { hash: token },
-    });
-    if (objToken) {
-      const user = await this.prisma.user.findUnique({
-        where: { email: objToken.email },
-      });
-      return user;
-    }
-    return null;
-  }
+  // async getUserByToken(token: string): Promise<User> {
+  //   token = token.replace('Bearer ', '').trim();
+  //   const objToken: TokenDto = await this.prisma.token.findFirst({
+  //     where: { hash: token },
+  //   });
+  //   if (objToken) {
+  //     const user = await this.prisma.user.findUnique({
+  //       where: { email: objToken.email },
+  //     });
+  //     return user;
+  //   }
+  //   return null;
+  // }
 }

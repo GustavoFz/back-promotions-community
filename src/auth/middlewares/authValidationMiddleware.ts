@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { validateOrReject } from 'class-validator';
 import { NextFunction, Response } from 'express';
-import { AuthValidate } from '../dto/validate-auth.dto';
+import { AuthLogin } from '../dto/login-auth.dto';
 
 @Injectable()
 export class AuthValidationMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const body = req.body;
-    const login = new AuthValidate();
+    const login = new AuthLogin();
     const errors = [];
 
     Object.keys(body).forEach((key) => {

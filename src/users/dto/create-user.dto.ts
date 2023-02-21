@@ -7,9 +7,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { User } from '../entities/user.entity';
 
-export class CreateUserDto implements Partial<User> {
+export class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required.' })
   @IsString()
   nickname: string;
@@ -25,8 +24,5 @@ export class CreateUserDto implements Partial<User> {
   @IsString()
   @MinLength(4)
   @MaxLength(20)
-  //@Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-  //  message: 'password too weak',
-  //})
   password: string;
 }
