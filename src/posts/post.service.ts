@@ -32,6 +32,38 @@ export class PostService {
     });
   }
 
+  async findByFilter(
+    search?: string,
+    page?: number,
+    limit?: number,
+    sort?: string,
+    order?: 'asc' | 'desc',
+  ): Promise<Post[] | null> {
+    if (search === null || search === undefined) {
+      return this.prisma.post.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          [sort]: order,
+        },
+      });
+    }
+
+    return this.prisma.post.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+      where: {
+        OR: [
+          { title: { contains: search } },
+          { content: { contains: search } },
+        ],
+      },
+      orderBy: {
+        [sort]: order,
+      },
+    });
+  }
+
   async findOne(
     postWhereUniqueInput: Prisma.PostWhereUniqueInput,
   ): Promise<Post | null> {

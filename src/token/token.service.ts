@@ -42,11 +42,12 @@ export class TokenService {
     const objToken = await this.prisma.token.findFirst({
       where: { hash: oldToken },
     });
+
     if (objToken) {
       const user = await this.prisma.user.findUnique({
         where: { email: objToken.email },
       });
-      return await this.authService.login(user);
+      return await this.authService.createToken(user);
     }
 
     throw new UnauthorizedException('Invalid Token');

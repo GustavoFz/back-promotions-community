@@ -17,20 +17,12 @@ export class AuthService {
   ) {}
 
   async login(data: AuthLogin): Promise<AccessToken> {
-    const user = await this.validateUser(data.email, data.password);
-    const { id, email, nickname, picture } = user;
-    const payload = {
-      id,
-      email,
-      nickname,
-      picture,
-    };
+    console.log(data);
 
-    const token = await this.jwtService.sign(payload);
-    await this.tokenService.create(token, email);
-    return {
-      access_token: token,
-    };
+    const user = await this.validateUser(data.email, data.password);
+
+    const token = await this.createToken(user);
+    return token;
   }
 
   async validateUser(
@@ -48,5 +40,21 @@ export class AuthService {
       }
     }
     return null;
+  }
+
+  async createToken(user: UserWithoutPasswordDto): Promise<AccessToken> {
+    const { id, email, nickname, picture } = user;
+    const payload = {
+      id,
+      email,
+      nickname,
+      picture,
+    };
+
+    const token = await this.jwtService.sign(payload);
+    await this.tokenService.create(token, email);
+    return {
+      access_token: token,
+    };
   }
 }
