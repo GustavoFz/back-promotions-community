@@ -41,7 +41,7 @@ export class UserController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update user' })
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateUserDto,
   ): Promise<User> {
     return this.userService.update(id, data);
@@ -49,7 +49,7 @@ export class UserController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user' })
-  async remove(@Param('id') id: number): Promise<User> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.remove(id);
   }
 }

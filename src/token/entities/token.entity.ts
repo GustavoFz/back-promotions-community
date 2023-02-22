@@ -1,9 +1,9 @@
-import Prisma from '@prisma/client';
-
-export class TokenDto implements Prisma.Token {
+export class TokenDto {
   id: number;
 
   hash: string;
 
   email: string;
+
+  createdAt: Date;
 }

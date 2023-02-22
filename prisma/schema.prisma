@@ -11,32 +11,42 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   nickname String
   picture  String?
-  email    String    @unique
-  posts    Post[]
+  email    String  @unique
   password String
-  comments Comment[]
 
+  posts       Post[]
+  comments    Comment[]
+  likePost    LikePost[]
+  likeComment LikeComment[]
+
+  updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
 model Post {
-  id       Int       @id @default(autoincrement())
-  title    String
-  content  String
-  image    String
-  price    Float
-  company  String?
-  temp     Int       @default(0)
-  comments Comment[]
-  link     String
-  expired  Boolean   @default(false)
+  id      Int     @id @default(autoincrement())
+  title   String
+  content String
+  image   String
+  price   Float
+  company String?
+  temp    Int     @default(0)
+  link    String
+  expired Boolean @default(false)
 
   user   User @relation(fields: [userId], references: [id])
   userId Int
 
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  comments Comment[]
+  like     LikePost[]
+
+  updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
@@ -46,17 +56,52 @@ model Comment {
   likes   Int    @default(0)
   ref     Int?
 
-  user   User? @relation(fields: [userId], references: [id])
-  userId Int?
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
-  post   Post? @relation(fields: [postId], references: [id])
-  postId Int?
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+
+  like LikeComment[]
+
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  post Post[]
 
   createdAt DateTime @default(now())
 }
 
 model Token {
-  id    Int    @id @default(autoincrement())
-  hash  String
   email String @unique
+  hash  String
+
+  createdAt DateTime @default(now())
+}
+
+model LikePost {
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  createdAt DateTime @default(now())
+
+  @@id([postId, userId])
+}
+
+model LikeComment {
+  comment   Comment @relation(fields: [commentId], references: [id])
+  commentId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  createdAt DateTime @default(now())
+
+  @@id([commentId, userId])
 }

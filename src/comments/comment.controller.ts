@@ -21,9 +21,7 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
-  async create(
-    @Body() createCommentDto: CommentModelPrisma,
-  ): Promise<CommentModelPrisma> {
+  async create(@Body() createCommentDto): Promise<CommentModelPrisma> {
     return this.commentService.create(createCommentDto);
   }
 

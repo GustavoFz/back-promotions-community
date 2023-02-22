@@ -23,7 +23,7 @@ export class PostController {
   async create(
     @Body() createPostDto: PostModelPrisma,
   ): Promise<PostModelPrisma> {
-    const { title, content, userId, image, price, link, company } =
+    const { title, content, userId, image, price, link, company, categoryId } =
       createPostDto;
     return this.postService.create({
       title,
@@ -31,6 +31,11 @@ export class PostController {
       user: {
         connect: {
           id: userId,
+        },
+      },
+      category: {
+        connect: {
+          id: categoryId,
         },
       },
       image,
