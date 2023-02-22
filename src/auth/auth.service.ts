@@ -17,8 +17,6 @@ export class AuthService {
   ) {}
 
   async login(data: AuthLogin): Promise<AccessToken> {
-    console.log(data);
-
     const user = await this.validateUser(data.email, data.password);
 
     const token = await this.createToken(user);

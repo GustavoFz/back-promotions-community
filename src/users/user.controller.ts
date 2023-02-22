@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -33,7 +34,7 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Find user' })
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findById(id);
   }
 
