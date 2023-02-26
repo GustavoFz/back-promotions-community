@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Comment, Prisma } from '@prisma/client';
 
 import { PrismaService } from 'src/prisma.service';
+import { LikeCommentDto } from './dto/comment-like.dto';
 
 @Injectable()
 export class CommentService {
@@ -54,6 +55,29 @@ export class CommentService {
   async remove(where: Prisma.CommentWhereUniqueInput): Promise<Comment> {
     return this.prisma.comment.delete({
       where,
+    });
+  }
+
+  async createLike(data: LikeCommentDto) {
+    const like = await this.findLike(data);
+    if (!like) {
+      return await this.prisma.likeComment.create({ data });
+    }
+  }
+
+  async removeLike(data: LikeCommentDto) {
+    const like = await this.findLike(data);
+    if (like) {
+      return await this.prisma.likeComment.delete({
+        where: { commentId_userId: data },
+      });
+    }
+    throw new BadRequestException('Comment not liked');
+  }
+
+  async findLike(data: LikeCommentDto) {
+    return this.prisma.likeComment.findUnique({
+      where: { commentId_userId: data },
     });
   }
 }

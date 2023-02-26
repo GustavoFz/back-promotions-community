@@ -84,10 +84,11 @@ model Token {
 }
 
 model LikePost {
-  post   Post @relation(fields: [postId], references: [id])
+  post   Post    @relation(fields: [postId], references: [id])
   postId Int
-  user   User @relation(fields: [userId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
   userId Int
+  type   Boolean
 
   createdAt DateTime @default(now())
 

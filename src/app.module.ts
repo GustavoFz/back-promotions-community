@@ -5,12 +5,11 @@ import { AuthModule } from './auth/auth.module';
 import { CommentModule } from './comments/comment.module';
 import { PostModule } from './posts/post.module';
 import { PrismaService } from './prisma.service';
-import { UserModule } from './users/user.module';
 import { TokenModule } from './token/token.module';
-import { LikesModule } from './likes/likes.module';
+import { UserModule } from './users/user.module';
 
 @Module({
-  imports: [CommentModule, PostModule, UserModule, AuthModule, TokenModule, LikesModule],
+  imports: [CommentModule, PostModule, UserModule, AuthModule, TokenModule],
   controllers: [AppController],
   providers: [PrismaService],
 })

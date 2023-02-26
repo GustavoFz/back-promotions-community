@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Post, Prisma } from '@prisma/client';
 
 import { PrismaService } from 'src/prisma.service';
+import { LikePostDto } from './dto/post-like.dto';
 
 @Injectable()
 export class PostService {
@@ -91,6 +92,55 @@ export class PostService {
   async remove(where: Prisma.PostWhereUniqueInput): Promise<Post> {
     return this.prisma.post.delete({
       where,
+    });
+  }
+
+  async createLikePost(data: LikePostDto) {
+    const like = await this.findLikePost(data);
+
+    if (!like) {
+      return await this.prisma.likePost.create({ data });
+    }
+
+    if (like.type !== data.type) {
+      return this.updateLikePost(data);
+    }
+
+    throw new BadRequestException('Post already liked');
+  }
+
+  async updateLikePost(data: LikePostDto) {
+    return await this.prisma.likePost.update({
+      data: { type: data.type },
+      where: { postId_userId: { postId: data.postId, userId: data.userId } },
+    });
+  }
+
+  async removeLikePost(data: LikePostDto) {
+    const likeExists = await this.findLikePost(data);
+    console.log(likeExists);
+
+    if (!likeExists) {
+      throw new BadRequestException('Post not liked');
+    }
+    await this.prisma.likePost.delete({
+      where: {
+        postId_userId: {
+          postId: data.postId,
+          userId: data.userId,
+        },
+      },
+    });
+  }
+
+  async findLikePost(data: LikePostDto) {
+    return await this.prisma.likePost.findUnique({
+      where: {
+        postId_userId: {
+          postId: data.postId,
+          userId: data.userId,
+        },
+      },
     });
   }
 }

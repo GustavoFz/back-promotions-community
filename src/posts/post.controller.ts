@@ -12,6 +12,8 @@ import { PostService } from './post.service';
 
 import { ApiTags } from '@nestjs/swagger';
 import { Post as PostModelPrisma } from '@prisma/client';
+
+import { LikePostDto } from './dto/post-like.dto';
 import { ParseIntPipeIgnoreNull } from './pipes/parse-int.pipe';
 
 @ApiTags('Posts')
@@ -45,15 +47,6 @@ export class PostController {
     });
   }
 
-  // @Get('all')
-  // async findAll(): Promise<PostModelPrisma[]> {
-  //   return this.postService.findAll({
-  //     include: {
-  //       user: true,
-  //     },
-  //   });
-  // }
-
   @Get()
   async findByFilter(
     @Query('search') search: string,
@@ -81,5 +74,15 @@ export class PostController {
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<PostModelPrisma> {
     return this.postService.remove({ id: Number(id) });
+  }
+
+  @Post('post')
+  createLikePost(@Body() data: LikePostDto) {
+    return this.postService.createLikePost(data);
+  }
+
+  @Delete('post')
+  removeLikePost(@Body() data: LikePostDto) {
+    return this.postService.removeLikePost(data);
   }
 }

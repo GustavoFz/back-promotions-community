@@ -13,6 +13,7 @@ import { CommentService } from './comment.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Comment as CommentModelPrisma } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { LikeCommentDto } from './dto/comment-like.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('Comments')
@@ -62,5 +63,15 @@ export class CommentController {
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<CommentModelPrisma> {
     return this.commentService.remove({ id: Number(id) });
+  }
+
+  @Post('comment')
+  createLikeComment(@Body() data: LikeCommentDto) {
+    return this.commentService.createLike(data);
+  }
+
+  @Delete('comment')
+  removeLikeComment(@Body() data: LikeCommentDto) {
+    return this.commentService.removeLike(data);
   }
 }
