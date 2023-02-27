@@ -13,7 +13,9 @@ import { PostService } from './post.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Post as PostModelPrisma } from '@prisma/client';
 
+import { CreatePostDto } from './dto/create-post.dto';
 import { LikePostDto } from './dto/post-like.dto';
+import { PostEntity } from './entities/post.entity';
 import { ParseIntPipeIgnoreNull } from './pipes/parse-int.pipe';
 
 @ApiTags('Posts')
@@ -22,9 +24,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  async create(
-    @Body() createPostDto: PostModelPrisma,
-  ): Promise<PostModelPrisma> {
+  async create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
     const { title, content, userId, image, price, link, company, categoryId } =
       createPostDto;
     return this.postService.create({
@@ -66,7 +66,7 @@ export class PostController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() data: PostModelPrisma,
+    @Body() data: CreatePostDto,
   ): Promise<PostModelPrisma> {
     return this.postService.update({ id: Number(id), data });
   }

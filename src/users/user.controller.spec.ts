@@ -79,15 +79,21 @@ describe('UserController', () => {
 
   describe('findById', () => {
     it('should call findById', async () => {
-      const result = await controller.findOne(1);
+      const id = 1;
+      const result = await controller.findOne(id);
 
       expect(result).toEqual(userEntityList[0]);
       expect(typeof result).toEqual('object');
       expect(service.findById).toHaveBeenCalledTimes(1);
+      expect(service.findById).toHaveBeenCalledWith(id);
     });
 
     it('should throw an error', async () => {
+      const id = 1;
+
       jest.spyOn(service, 'findById').mockRejectedValueOnce(new Error());
+
+      expect(controller.findOne(id)).rejects.toThrowError();
     });
   });
 
