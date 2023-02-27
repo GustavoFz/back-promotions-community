@@ -2,9 +2,9 @@ import { forwardRef, HttpException, Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
-import { AuthService } from 'src/auth/auth.service';
-import { PrismaService } from 'src/prisma.service';
-import { AccessToken } from 'src/token/dto/access-token.dto';
+import { AuthService } from '../auth/auth.service';
+import { PrismaService } from '../prisma.service';
+import { AccessToken } from '../token/dto/access-token.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -97,7 +97,7 @@ export class UserService {
     });
   }
 
-  async remove(id: number): Promise<User> {
+  async remove(id: number) {
     return this.prisma.user.delete({
       where: {
         id,

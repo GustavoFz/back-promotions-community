@@ -7,8 +7,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { TokenService } from 'src/token/token.service';
-import { User } from 'src/users/entities/user.entity';
+import { TokenService } from '../token/token.service';
+import { User } from '../users/entities/user.entity';
 
 import { AuthService } from './auth.service';
 import { AuthLogin } from './dto/login-auth.dto';

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { UserWithoutPasswordDto } from 'src/auth/dto/withoutPassword-user.dto';
-import { AccessToken } from 'src/token/dto/access-token.dto';
-import { TokenService } from 'src/token/token.service';
-import { UserService } from 'src/users/user.service';
+import { UserWithoutPasswordDto } from '../auth/dto/withoutPassword-user.dto';
+import { AccessToken } from '../token/dto/access-token.dto';
+import { TokenService } from '../token/token.service';
+import { UserService } from '../users/user.service';
 import { AuthLogin } from './dto/login-auth.dto';
 
 @Injectable()

@@ -12,7 +12,7 @@ import { CommentService } from './comment.service';
 
 import { ApiTags } from '@nestjs/swagger';
 import { Comment as CommentModelPrisma } from '@prisma/client';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LikeCommentDto } from './dto/comment-like.dto';
 
 @UseGuards(JwtAuthGuard)

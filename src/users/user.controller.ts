@@ -9,7 +9,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AccessToken } from 'src/token/dto/access-token.dto';
+import { AccessToken } from '../token/dto/access-token.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -49,7 +49,7 @@ export class UserController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user' })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);
   }
 }

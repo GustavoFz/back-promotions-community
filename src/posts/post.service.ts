@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Post, Prisma } from '@prisma/client';
 
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { LikePostDto } from './dto/post-like.dto';
 
 @Injectable()

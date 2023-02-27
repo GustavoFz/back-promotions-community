@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Comment, Prisma } from '@prisma/client';
 
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { LikeCommentDto } from './dto/comment-like.dto';
 
 @Injectable()

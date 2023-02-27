@@ -17,4 +17,14 @@ export class User {
 
   updatedAt: Date;
   createdAt: Date;
+
+  constructor(user?: Partial<User>) {
+    this.id = user?.id;
+    this.nickname = user?.nickname;
+    this.picture = user?.picture;
+    this.email = user?.email;
+    this.password = user?.password;
+    this.updatedAt = user?.updatedAt;
+    this.createdAt = user?.createdAt;
+  }
 }
