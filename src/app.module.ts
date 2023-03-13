@@ -7,9 +7,10 @@ import { PostModule } from './posts/post.module';
 import { PrismaService } from './prisma.service';
 import { TokenModule } from './token/token.module';
 import { UserModule } from './users/user.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
-  imports: [CommentModule, PostModule, UserModule, AuthModule, TokenModule],
+  imports: [CommentModule, PostModule, UserModule, AuthModule, TokenModule, CategoriesModule],
   controllers: [AppController],
   providers: [PrismaService],
 })
