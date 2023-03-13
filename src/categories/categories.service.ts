@@ -6,7 +6,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
   async create(data: CreateCategoryDto) {
-    const categoriExists = await this.prisma.category.findUnique({
+    const categoriExists = await this.prisma.category.findFirst({
       where: { name: data.name },
     });
 

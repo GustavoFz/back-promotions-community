@@ -69,7 +69,7 @@ model Comment {
 
 model Category {
   id   Int    @id @default(autoincrement())
-  name String @unique
+  name String
 
   post Post[]
 
