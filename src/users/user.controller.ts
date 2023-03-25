@@ -35,7 +35,23 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Find user' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.findById(id);
+    const followers = [1];
+    const following = [2];
+    const hotPosts = 10;
+    const posts = 50;
+    const thanks = 20;
+    const likes = 10000;
+
+    const user = await this.userService.findById(id);
+    return {
+      ...user,
+      followers,
+      following,
+      hotPosts,
+      posts,
+      thanks,
+      likes,
+    };
   }
 
   @Patch(':id')
