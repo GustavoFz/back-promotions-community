@@ -44,6 +44,7 @@ export class PostService {
       return this.prisma.post.findMany({
         skip: (page - 1) * limit,
         take: limit,
+        include: { _count: { select: { comments: true } } },
         orderBy: {
           [sort]: order,
         },

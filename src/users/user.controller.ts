@@ -12,6 +12,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AccessToken } from '../token/dto/access-token.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Profile } from './entities/user-profile.entity';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -25,6 +26,14 @@ export class UserController {
   async create(@Body() data: CreateUserDto): Promise<AccessToken> {
     return this.userService.create(data);
   }
+  @Post('follow')
+  async follow(@Body() data) {
+    return this.userService.follow(data);
+  }
+  @Delete('unfollow')
+  async unfollow(@Body() data) {
+    return this.userService.unfollow(data);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Find all users' })
@@ -34,24 +43,8 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Find user' })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    const followers = [1];
-    const following = [2];
-    const hotPosts = 10;
-    const posts = 50;
-    const thanks = 20;
-    const likes = 10000;
-
-    const user = await this.userService.findById(id);
-    return {
-      ...user,
-      followers,
-      following,
-      hotPosts,
-      posts,
-      thanks,
-      likes,
-    };
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Profile> {
+    return await this.userService.findById(id);
   }
 
   @Patch(':id')

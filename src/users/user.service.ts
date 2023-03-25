@@ -69,11 +69,23 @@ export class UserService {
   }
 
   async findById(id: number): Promise<User | null> {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id,
       },
+      include: {
+        _count: {
+          select: {
+            followedBy: true,
+            following: true,
+            posts: true,
+            likePost: true,
+          },
+        },
+      },
     });
+
+    return user;
   }
 
   async findUserWithoutPasswordByEmail(email: string): Promise<User | null> {
@@ -101,6 +113,32 @@ export class UserService {
     return this.prisma.user.delete({
       where: {
         id,
+      },
+    });
+  }
+
+  async follow(data) {
+    return await this.prisma.user.update({
+      where: { id: data.userId },
+      data: {
+        following: {
+          create: [
+            {
+              followingId: data.followingId,
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  async unfollow(data) {
+    return await this.prisma.follows.delete({
+      where: {
+        followerId_followingId: {
+          followerId: data.userId,
+          followingId: data.followingId,
+        },
       },
     });
   }
