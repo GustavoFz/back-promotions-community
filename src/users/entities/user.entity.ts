@@ -15,6 +15,13 @@ export class User {
   @ApiProperty({ example: 'YOUR PASSWORD HERE' })
   password: string;
 
+  followers?: number[] = [];
+  following?: number[] = [];
+  posts?: number = 50;
+  hotPosts?: number = 10;
+  thanks?: number = 20;
+  likes?: number = 10000;
+
   updatedAt: Date;
   createdAt: Date;
 
