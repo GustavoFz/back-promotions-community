@@ -42,17 +42,17 @@ export class UserController {
 
     return await this.userService.follow({
       userId: user.id,
-      followingId: data.followingId,
+      followingId: data.userFollowingId,
     });
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('unfollow')
+  @Delete('follow')
   async unfollow(@Body() data: FollowDto, @Headers('Authorization') token) {
     const user = await this.tokenService.getUserByToken(token);
     return await this.userService.unfollow({
       userId: user.id,
-      followingId: data.followingId,
+      followingId: data.userFollowingId,
     });
   }
 
