@@ -1,4 +1,11 @@
-import { forwardRef, HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  forwardRef,
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
@@ -20,7 +27,7 @@ export class UserService {
   async create(CreateUserDto: CreateUserDto): Promise<AccessToken> {
     const userExists = await this.findByEmail(CreateUserDto.email);
     if (userExists?.email == CreateUserDto.email) {
-      throw new HttpException('user already exists', 202);
+      throw new ConflictException('user already exists');
     }
 
     const data = {
@@ -41,7 +48,7 @@ export class UserService {
     const users = await this.prisma.user.findMany();
 
     if (users.length == 0) {
-      throw new HttpException('users not found', 404);
+      throw new NotFoundException('users not found');
     }
     return users;
   }
