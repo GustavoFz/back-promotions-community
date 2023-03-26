@@ -44,6 +44,13 @@ export class CommentController {
     });
   }
 
+  @Get('user/:id')
+  async findAllByUser(@Param('id') id: string): Promise<CommentModelPrisma[]> {
+    return this.commentService.findAll({
+      where: { userId: Number(id) },
+    });
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<CommentModelPrisma> {
     return this.commentService.findOne({ id: Number(id) });
