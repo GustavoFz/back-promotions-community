@@ -37,7 +37,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post('follow')
-  async follow(@Body() data: FollowDto, @Headers('Authorization') token) {
+  async follow(@Body() data: FollowDto, @Headers('Authorization') token: string) {
     const user = await this.tokenService.getUserByToken(token);
 
     return await this.userService.follow({

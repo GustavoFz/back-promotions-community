@@ -3,16 +3,20 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 
 import { ApiTags } from '@nestjs/swagger';
 import { Post as PostModelPrisma } from '@prisma/client';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TokenService } from '../token/token.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { LikePostDto } from './dto/post-like.dto';
 import { PostEntity } from './entities/post.entity';
@@ -21,7 +25,10 @@ import { ParseIntPipeIgnoreNull } from './pipes/parse-int.pipe';
 @ApiTags('Posts')
 @Controller('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private tokenService: TokenService,
+  ) {}
 
   @Post()
   async create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
@@ -76,13 +83,23 @@ export class PostController {
     return this.postService.remove({ id: Number(id) });
   }
 
-  @Post('post')
-  createLikePost(@Body() data: LikePostDto) {
-    return this.postService.createLikePost(data);
+  @UseGuards(JwtAuthGuard)
+  @Post('like')
+  async createLikePost(
+    @Body() data: LikePostDto,
+    @Headers('Authorization') token: string,
+  ) {
+    const user = await this.tokenService.getUserByToken(token);
+    return await this.postService.createLikePost({ ...data, userId: user.id });
   }
 
-  @Delete('post')
-  removeLikePost(@Body() data: LikePostDto) {
-    return this.postService.removeLikePost(data);
+  @UseGuards(JwtAuthGuard)
+  @Delete('like')
+  async removeLikePost(
+    @Body() data: LikePostDto,
+    @Headers('Authorization') token: string,
+  ) {
+    const user = await this.tokenService.getUserByToken(token);
+    return await this.postService.removeLikePost({ ...data, userId: user.id });
   }
 }
