@@ -7,6 +7,7 @@ import {
 
 import { AuthService } from '../auth/auth.service';
 import { PrismaService } from '../prisma.service';
+import { User } from '../users/entities/user.entity';
 import { AccessToken } from './dto/access-token.dto';
 
 @Injectable()
@@ -53,17 +54,17 @@ export class TokenService {
     throw new UnauthorizedException('Invalid Token');
   }
 
-  // async getUserByToken(token: string): Promise<User> {
-  //   token = token.replace('Bearer ', '').trim();
-  //   const objToken: TokenDto = await this.prisma.token.findFirst({
-  //     where: { hash: token },
-  //   });
-  //   if (objToken) {
-  //     const user = await this.prisma.user.findUnique({
-  //       where: { email: objToken.email },
-  //     });
-  //     return user;
-  //   }
-  //   return null;
-  // }
+  async getUserByToken(token: string): Promise<User> {
+    token = token.replace('Bearer ', '').trim();
+    const objToken = await this.prisma.token.findFirst({
+      where: { hash: token },
+    });
+    if (objToken) {
+      const user = await this.prisma.user.findUnique({
+        where: { email: objToken.email },
+      });
+      return user;
+    }
+    return null;
+  }
 }

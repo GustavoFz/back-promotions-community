@@ -119,7 +119,6 @@ export class PostService {
 
   async removeLikePost(data: LikePostDto) {
     const likeExists = await this.findLikePost(data);
-    console.log(likeExists);
 
     if (!likeExists) {
       throw new BadRequestException('Post not liked');

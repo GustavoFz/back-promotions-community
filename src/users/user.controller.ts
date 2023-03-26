@@ -3,14 +3,19 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AccessToken } from '../token/dto/access-token.dto';
+import { TokenService } from '../token/token.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FollowDto } from './dto/follow-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Profile } from './entities/user-profile.entity';
 import { User } from './entities/user.entity';
@@ -19,20 +24,36 @@ import { UserService } from './user.service';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private tokenService: TokenService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create user' })
   async create(@Body() data: CreateUserDto): Promise<AccessToken> {
     return this.userService.create(data);
   }
+
+  @UseGuards(JwtAuthGuard)
   @Post('follow')
-  async follow(@Body() data) {
-    return this.userService.follow(data);
+  async follow(@Body() data: FollowDto, @Headers('Authorization') token) {
+    const user = await this.tokenService.getUserByToken(token);
+
+    return await this.userService.follow({
+      userId: user.id,
+      followingId: data.followingId,
+    });
   }
+
+  @UseGuards(JwtAuthGuard)
   @Delete('unfollow')
-  async unfollow(@Body() data) {
-    return this.userService.unfollow(data);
+  async unfollow(@Body() data: FollowDto, @Headers('Authorization') token) {
+    const user = await this.tokenService.getUserByToken(token);
+    return await this.userService.unfollow({
+      userId: user.id,
+      followingId: data.followingId,
+    });
   }
 
   @Get()
