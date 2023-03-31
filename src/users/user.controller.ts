@@ -51,7 +51,6 @@ export class UserController {
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Delete('follow/:id')
   async unfollow(
