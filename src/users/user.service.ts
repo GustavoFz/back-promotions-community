@@ -131,7 +131,7 @@ export class UserService {
         following: {
           create: [
             {
-              followingId: data.userFollowingId,
+              followingId: data.followingId,
             },
           ],
         },
@@ -144,7 +144,7 @@ export class UserService {
       where: {
         followerId_followingId: {
           followerId: data.userId,
-          followingId: data.userFollowingId,
+          followingId: data.followingId,
         },
       },
     });

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Headers,
+  HttpCode,
   Param,
   ParseIntPipe,
   Patch,
@@ -15,7 +16,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AccessToken } from '../token/dto/access-token.dto';
 import { TokenService } from '../token/token.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { FollowDto } from './dto/follow-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Profile } from './entities/user-profile.entity';
 import { User } from './entities/user.entity';
@@ -36,23 +36,30 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('follow')
-  async follow(@Body() data: FollowDto, @Headers('Authorization') token: string) {
+  @Post('follow/:id')
+  async follow(
+    @Param() followingId: string,
+    @Headers('Authorization') token: string,
+  ) {
     const user = await this.tokenService.getUserByToken(token);
 
     return await this.userService.follow({
       userId: user.id,
-      followingId: data.userFollowingId,
+      followingId: followingId,
     });
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   @Delete('follow')
-  async unfollow(@Body() data: FollowDto, @Headers('Authorization') token) {
+  async unfollow(
+    @Param() followingId: string,
+    @Headers('Authorization') token,
+  ) {
     const user = await this.tokenService.getUserByToken(token);
     return await this.userService.unfollow({
       userId: user.id,
-      followingId: data.userFollowingId,
+      followingId: followingId,
     });
   }
 
@@ -77,9 +84,10 @@ export class UserController {
     return this.userService.update(id, data);
   }
 
+  @HttpCode(204)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user' })
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);
   }
 }
