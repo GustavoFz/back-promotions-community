@@ -57,9 +57,9 @@ export class PostController {
   @Get()
   async findByFilter(
     @Query('search') search: string,
-    @Query('page', ParseIntPipeIgnoreNull) page: number = 1,
-    @Query('limit', ParseIntPipeIgnoreNull) limit: number = 10,
-    @Query('sort') sort: string = 'createdAt',
+    @Query('page', ParseIntPipeIgnoreNull) page = 1,
+    @Query('limit', ParseIntPipeIgnoreNull) limit = 10,
+    @Query('sort') sort = 'createdAt',
     @Query('order') order: 'asc' | 'desc' = 'desc',
   ): Promise<PostModelPrisma[]> {
     return this.postService.findByFilter(search, page, limit, sort, order);

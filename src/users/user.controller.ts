@@ -38,7 +38,11 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post('follow/:id')
-  async follow(@Param() id: string, @Headers('Authorization') token: string) {
+  async follow(
+    @Param('id', ParseIntPipe) id: number,
+    @Headers('Authorization') token: string,
+  ) {
+    return token;
     const user = await this.tokenService.getUserByToken(token);
 
     return await this.userService.follow({
@@ -52,9 +56,10 @@ export class UserController {
   @Delete('follow/:id')
   async unfollow(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('Authorization') token,
+    @Headers('Authorization') token: string,
   ) {
     const user = await this.tokenService.getUserByToken(token);
+    return user;
     if (!id) {
       throw new UnauthorizedException('User not present on params');
     }
