@@ -38,14 +38,14 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Post('follow/:id')
   async follow(
-    @Param() followingId: string,
+    @Param() id: string,
     @Headers('Authorization') token: string,
   ) {
     const user = await this.tokenService.getUserByToken(token);
 
     return await this.userService.follow({
       userId: user.id,
-      followingId: followingId,
+      followingId: id,
     });
   }
 
@@ -53,13 +53,13 @@ export class UserController {
   @HttpCode(204)
   @Delete('follow/:id')
   async unfollow(
-    @Param() followingId: string,
+    @Param() id: string,
     @Headers('Authorization') token,
   ) {
     const user = await this.tokenService.getUserByToken(token);
     return await this.userService.unfollow({
       userId: user.id,
-      followingId: followingId,
+      followingId: id,
     });
   }
 
