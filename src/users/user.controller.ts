@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -37,10 +38,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post('follow/:id')
-  async follow(
-    @Param() id: string,
-    @Headers('Authorization') token: string,
-  ) {
+  async follow(@Param() id: string, @Headers('Authorization') token: string) {
     const user = await this.tokenService.getUserByToken(token);
 
     return await this.userService.follow({
@@ -53,10 +51,13 @@ export class UserController {
   @HttpCode(204)
   @Delete('follow/:id')
   async unfollow(
-    @Param() id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Headers('Authorization') token,
   ) {
     const user = await this.tokenService.getUserByToken(token);
+    if (!id) {
+      throw new UnauthorizedException('User not present on params');
+    }
     return await this.userService.unfollow({
       userId: user.id,
       followingId: id,
