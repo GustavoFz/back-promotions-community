@@ -51,7 +51,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
-  @Delete('follow')
+  @Delete('follow/:id')
   async unfollow(
     @Param() followingId: string,
     @Headers('Authorization') token,
