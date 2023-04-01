@@ -10,6 +10,6 @@ export class TokenController {
 
   @Put('refresh')
   async refreshToken(@Body() data: RefreshTokenDto) {
-    return this.tokenService.refreshToken(data.oldToken);
+    return this.tokenService.refreshToken(data.token);
   }
 }

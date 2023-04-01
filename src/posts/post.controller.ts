@@ -20,7 +20,7 @@ import { TokenService } from '../token/token.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { LikePostDto } from './dto/post-like.dto';
 import { PostEntity } from './entities/post.entity';
-import { ParseIntPipeIgnoreNull } from './pipes/parse-int.pipe';
+import { ParseIntPipeIgnoreNull } from '../pipes/parse-int.pipe';
 
 @ApiTags('Posts')
 @Controller('post')

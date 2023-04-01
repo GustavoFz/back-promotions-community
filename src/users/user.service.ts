@@ -6,7 +6,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 import { AuthService } from '../auth/auth.service';
@@ -53,26 +52,31 @@ export class UserService {
     return users;
   }
 
-  async findByFilter(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[] | null> {
-    const { skip, take, cursor, where, orderBy } = params;
+  async findByFilter(
+    page?: number,
+    limit?: number,
+    sort?: string,
+    order?: 'asc' | 'desc',
+  ) {
     const users = await this.prisma.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
+      skip: (page - 1) * limit,
+      take: limit,
+      include: { _count: { select: { comments: true } } },
+      orderBy: {
+        [sort]: order,
+      },
     });
 
     if (users.length == 0) {
       throw new HttpException('users not found', 404);
     }
-    return users;
+    const total = await this.prisma.user.count();
+    const result = {
+      list: users,
+      total,
+    };
+
+    return result;
   }
 
   async findById(id: number) {
@@ -148,5 +152,20 @@ export class UserService {
         },
       },
     });
+  }
+
+  async existFolow(data) {
+    const follow = await this.prisma.follows.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: data.followerId,
+          followingId: data.followingId,
+        },
+      },
+    });
+    if (follow) {
+      return follow;
+    }
+    return null;
   }
 }

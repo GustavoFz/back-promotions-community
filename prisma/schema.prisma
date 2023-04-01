@@ -77,7 +77,7 @@ model Category {
 
 model Token {
   email String @unique
-  hash  String
+  hash  String @unique
 
   createdAt DateTime @default(now())
 }

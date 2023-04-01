@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -9,11 +10,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UnauthorizedException,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ParseIntPipeIgnoreNull } from '../pipes/parse-int.pipe';
 import { AccessToken } from '../token/dto/access-token.dto';
 import { TokenService } from '../token/token.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -42,8 +44,15 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Headers('Authorization') token: string,
   ) {
-    return token;
     const user = await this.tokenService.getUserByToken(token);
+
+    const existFolow = await this.userService.existFolow({
+      followingId: id,
+      followerId: user.id,
+    });
+    if (existFolow) {
+      throw new ConflictException('The user is already being followed');
+    }
 
     return await this.userService.follow({
       userId: user.id,
@@ -51,6 +60,7 @@ export class UserController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Delete('follow/:id')
   async unfollow(
@@ -58,10 +68,6 @@ export class UserController {
     @Headers('Authorization') token: string,
   ) {
     const user = await this.tokenService.getUserByToken(token);
-    return user;
-    if (!id) {
-      throw new UnauthorizedException('User not present on params');
-    }
     return await this.userService.unfollow({
       userId: user.id,
       followingId: id,
@@ -70,8 +76,13 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Find all users' })
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAll(
+    @Query('page', ParseIntPipeIgnoreNull) page = 1,
+    @Query('limit', ParseIntPipeIgnoreNull) limit = 10,
+    @Query('sort') sort = 'createdAt',
+    @Query('order') order: 'asc' | 'desc' = 'desc',
+  ) {
+    return this.userService.findByFilter(page, limit, sort, order);
   }
 
   @Get(':id')

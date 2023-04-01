@@ -39,15 +39,16 @@ export class TokenService {
     });
   }
 
-  async refreshToken(oldToken: string): Promise<AccessToken> {
-    const objToken = await this.prisma.token.findFirst({
-      where: { hash: oldToken },
+  async refreshToken(token: string): Promise<AccessToken> {
+    const objToken = await this.prisma.token.findUnique({
+      where: { hash: token },
     });
 
     if (objToken) {
       const user = await this.prisma.user.findUnique({
         where: { email: objToken.email },
       });
+
       return await this.authService.createToken(user);
     }
 
