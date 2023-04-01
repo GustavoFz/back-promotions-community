@@ -87,8 +87,8 @@ export class UserService {
       include: {
         _count: {
           select: {
-            followedBy: true,
-            following: true,
+            followed: true,
+            follower: true,
             posts: true,
             likePost: true,
           },
@@ -132,12 +132,8 @@ export class UserService {
     return await this.prisma.user.update({
       where: { id: data.userId },
       data: {
-        following: {
-          create: [
-            {
-              followingId: data.followingId,
-            },
-          ],
+        follower: {
+          create: [{ followedId: data.followedId }],
         },
       },
     });
@@ -146,9 +142,9 @@ export class UserService {
   async unfollow(data) {
     return await this.prisma.follows.delete({
       where: {
-        followerId_followingId: {
+        followerId_followedId: {
           followerId: data.userId,
-          followingId: data.followingId,
+          followedId: data.followedId,
         },
       },
     });
@@ -157,9 +153,9 @@ export class UserService {
   async existFolow(data) {
     const follow = await this.prisma.follows.findUnique({
       where: {
-        followerId_followingId: {
+        followerId_followedId: {
           followerId: data.followerId,
-          followingId: data.followingId,
+          followedId: data.followedId,
         },
       },
     });

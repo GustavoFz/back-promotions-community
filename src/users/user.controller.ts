@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -11,6 +12,7 @@ import {
   Patch,
   Post,
   Query,
+  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -47,16 +49,21 @@ export class UserController {
     const user = await this.tokenService.getUserByToken(token);
 
     const existFolow = await this.userService.existFolow({
-      followingId: id,
+      followedId: id,
       followerId: user.id,
     });
+
+    if (id === user.id) {
+      throw new BadRequestException('You cannot follow yourself');
+    }
+
     if (existFolow) {
       throw new ConflictException('The user is already being followed');
     }
 
     return await this.userService.follow({
       userId: user.id,
-      followingId: id,
+      followedId: id,
     });
   }
 
@@ -68,9 +75,24 @@ export class UserController {
     @Headers('Authorization') token: string,
   ) {
     const user = await this.tokenService.getUserByToken(token);
+
+    const existFolow = await this.userService.existFolow({
+      followedId: id,
+      followerId: user.id,
+    });
+
+    if (id === user.id) {
+      throw new BadRequestException('You cannot follow yourself');
+    }
+
+    if (!existFolow) {
+      throw new UnprocessableEntityException('You are not following this user');
+    }
+
+    console.log(id, user.id);
     return await this.userService.unfollow({
       userId: user.id,
-      followingId: id,
+      followedId: id,
     });
   }
 

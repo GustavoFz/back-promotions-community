@@ -18,8 +18,8 @@ model User {
   comments    Comment[]
   likePost    LikePost[]
   likeComment LikeComment[]
-  followedBy  Follows[]     @relation("following")
-  following   Follows[]     @relation("follower")
+  follower    Follows[]     @relation("follower")
+  followed    Follows[]     @relation("followed")
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -110,10 +110,10 @@ model Follows {
   follower   User @relation("follower", fields: [followerId], references: [id])
   followerId Int
 
-  following   User @relation("following", fields: [followingId], references: [id])
-  followingId Int
+  followed   User @relation("followed", fields: [followedId], references: [id])
+  followedId Int
 
   createdAt DateTime @default(now())
 
-  @@id([followerId, followingId])
+  @@id([followerId, followedId])
 }
