@@ -117,23 +117,7 @@ export class PostService {
     });
   }
 
-  async removeLikePost(data: LikePostDto) {
-    const likeExists = await this.findLikePost(data);
-
-    if (!likeExists) {
-      throw new BadRequestException('Post not liked');
-    }
-    await this.prisma.likePost.delete({
-      where: {
-        postId_userId: {
-          postId: data.postId,
-          userId: data.userId,
-        },
-      },
-    });
-  }
-
-  async findLikePost(data: LikePostDto) {
+  async findLikePost(data) {
     return await this.prisma.likePost.findUnique({
       where: {
         postId_userId: {
