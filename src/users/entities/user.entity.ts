@@ -15,6 +15,10 @@ export class User {
   @ApiProperty({ example: 'YOUR PASSWORD HERE' })
   password: string;
 
+  isFollower?: boolean;
+
+  followed?: Array<any>;
+
   updatedAt: Date;
   createdAt: Date;
 

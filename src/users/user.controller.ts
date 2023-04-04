@@ -99,12 +99,17 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: 'Find all users' })
   async findAll(
+    @Headers('Authorization') token?,
     @Query('page', ParseIntPipeIgnoreNull) page = 1,
     @Query('limit', ParseIntPipeIgnoreNull) limit = 10,
     @Query('sort') sort = 'createdAt',
     @Query('order') order: 'asc' | 'desc' = 'desc',
   ) {
-    return this.userService.findByFilter(page, limit, sort, order);
+    if (token) {
+      const user = await this.tokenService.getUserByToken(token);
+      return this.userService.findAll(page, limit, sort, order, user?.id);
+    }
+    return this.userService.findAll(page, limit, sort, order);
   }
 
   @Get(':id')

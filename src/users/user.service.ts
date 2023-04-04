@@ -4,7 +4,6 @@ import {
   HttpException,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
@@ -43,25 +42,20 @@ export class UserService {
     return token;
   }
 
-  async findAll(): Promise<User[] | null> {
-    const users = await this.prisma.user.findMany();
-
-    if (users.length == 0) {
-      throw new NotFoundException('users not found');
-    }
-    return users;
-  }
-
-  async findByFilter(
+  async findAll(
     page?: number,
     limit?: number,
     sort?: string,
     order?: 'asc' | 'desc',
+    userId?: number,
   ) {
     const users = await this.prisma.user.findMany({
       skip: (page - 1) * limit,
       take: limit,
-      include: { _count: { select: { comments: true } } },
+      include: {
+        followed: { select: { followerId: true } },
+        _count: { select: { comments: true } },
+      },
       orderBy: {
         [sort]: order,
       },
@@ -70,6 +64,15 @@ export class UserService {
     if (users.length == 0) {
       throw new HttpException('users not found', 404);
     }
+
+    if (userId) {
+      users.forEach((user: User) => {
+        user.isFollower = user.followed.some(
+          (followed) => followed.followerId === userId,
+        );
+      });
+    }
+
     const total = await this.prisma.user.count();
     const result = {
       list: users,
