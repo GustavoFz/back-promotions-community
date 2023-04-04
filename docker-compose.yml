@@ -1,14 +1,14 @@
 version: '3.8'
 services:
-  api:
-    build: ./api
+  app:
+    build: ./app
     restart: always
     env_file:
       - .env
-    hostname: api
+    hostname: app
     volumes:
-      - .:/api
-      - /api/node_modules
-    command: yarn run start:dev
+      - .:/app
+      - /app/node_modules
+    command: yarn run start:prod
     ports:
       - 4000:4000
