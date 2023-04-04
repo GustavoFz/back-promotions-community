@@ -22,7 +22,11 @@ async function bootstrap() {
   //app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ errorHttpStatusCode: 422 }));
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   await app.listen(4000);
 }
 bootstrap();
